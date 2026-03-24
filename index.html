@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>elsie ♡</title>
+
+<!-- ♡ Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤍</text></svg>"/>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Fredoka:wght@300;400;500&family=Nunito:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+/* ─── THEME TOKENS ─── */
+:root {
+  --bg: #1c1920;
+  --blob1: #3a1d2c; --blob2: #281c38; --blob3: #351625; --blob4: #2a1832;
+  --acc: #fc9faf; --acc2: rgba(252,159,175,.78); --acc-dim: rgba(252,159,175,.13);
+  --ring-c: rgba(252,159,175,.1); --sym-c: rgba(252,159,175,.38);
+  --text: #fdf0f6; --text2: rgba(253,240,246,.52); --text3: rgba(253,240,246,.26);
+  --link-border: rgba(252,159,175,.14); --link-hover: rgba(252,159,175,.1);
+}
+[data-theme="light"] {
+  --bg: #fef4f7;
+  --blob1: #ffd8e4; --blob2: #f8cad8; --blob3: #fde0ea; --blob4: #f4d0de;
+  --acc: #c95070; --acc2: rgba(201,80,112,.78); --acc-dim: rgba(201,80,112,.1);
+  --ring-c: rgba(201,80,112,.12); --sym-c: rgba(201,80,112,.22);
+  --text: #2e1220; --text2: rgba(46,18,32,.52); --text3: rgba(46,18,32,.28);
+  --link-border: rgba(201,80,112,.14); --link-hover: rgba(201,80,112,.08);
+}
+
+/* ─── RESET ─── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; width: 100%; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 400;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── BACKGROUND BLOBS (mouse parallax via JS) ─── */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  will-change: transform;
+}
+.b1 { width: 580px; height: 580px; background: var(--blob1); opacity: .72; top: -140px; left: -120px; }
+.b2 { width: 440px; height: 440px; background: var(--blob2); opacity: .62; bottom: -100px; right: -100px; }
+.b3 { width: 320px; height: 320px; background: var(--blob3); opacity: .52; top: 35%; left: 48%; }
+.b4 { width: 210px; height: 210px; background: var(--blob4); opacity: .48; bottom: 8%; left: 6%; }
+.b5 { width: 180px; height: 180px; background: var(--blob1); opacity: .38; top: 9%; right: 9%; }
+
+/* ─── DECORATIVE RINGS (mouse parallax via JS) ─── */
+.deco-circles { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.circle {
+  position: absolute; border-radius: 50%;
+  border: 1px solid var(--ring-c);
+  will-change: transform;
+}
+.c1  { width: 520px; height: 520px; top: -110px; right: -110px; }
+.c2  { width: 360px; height: 360px; bottom: 30px; left: -90px; }
+.c3  { width: 200px; height: 200px; top: 22%; right: 8%; }
+.c4  { width: 110px; height: 110px; top: 13%; left: 13%; }
+.c5  { width: 64px;  height: 64px;  bottom: 18%; right: 22%; }
+.c6  { width: 34px;  height: 34px;  top: 58%; left: 7%; }
+.c7  { width: 82px;  height: 82px;  bottom: 28%; left: 28%; }
+.c8  { width: 44px;  height: 44px;  top: 38%; left: 4%; }
+.c9  { width: 150px; height: 150px; bottom: 12%; right: 5%; }
+.c10 { width: 26px;  height: 26px;  top: 70%; right: 35%; }
+
+/* ─── FLOATING HEARTS & STARS (mouse parallax via JS) ─── */
+.floats { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+.f {
+  position: absolute;
+  color: var(--sym-c);
+  line-height: 1;
+  user-select: none;
+  will-change: transform;
+}
+
+/* ─── CONTROLS (top-right buttons) ─── */
+.controls {
+  position: fixed; top: 1.2rem; right: 1.4rem; z-index: 50;
+  display: flex; gap: .5rem;
+}
+.ctrl {
+  background: transparent;
+  border: 1px solid var(--ring-c);
+  border-radius: 20px; padding: .28rem .8rem;
+  color: var(--text3); font-family: 'Fredoka', sans-serif; font-weight: 500;
+  font-size: .8rem; cursor: pointer; letter-spacing: .04em;
+  transition: color .2s, border-color .2s;
+}
+.ctrl:hover { border-color: var(--acc2); color: var(--acc); }
+
+/* ─── MAIN CONTENT ─── */
+.content {
+  position: relative; z-index: 10;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2rem;
+}
+.greeting {
+  font-weight: 300; font-size: 1rem; color: var(--text3);
+  letter-spacing: .18em; margin-bottom: .6rem;
+}
+.name {
+  font-family: 'Bubblegum Sans', cursive;
+  font-size: clamp(3rem, 10vw, 5.5rem);
+  color: var(--text); line-height: 1;
+  letter-spacing: .02em; margin-bottom: .5rem;
+}
+.role {
+  font-size: 1.05rem; color: var(--acc);
+  letter-spacing: .1em; margin-bottom: 2rem; opacity: .85;
+}
+.bio {
+  font-size: 1rem; color: var(--text2);
+  line-height: 1.9; max-width: 420px;
+  font-weight: 300; margin-bottom: .6rem;
+}
+.bio strong { color: var(--acc2); font-weight: 500; }
+.note {
+  font-size: .75rem; color: var(--text3);
+  letter-spacing: .06em; margin-bottom: 2.4rem; line-height: 1.8;
+}
+
+/* ─── LINKS ─── */
+.links { display: flex; justify-content: center; gap: .7rem; flex-wrap: wrap; }
+.link {
+  display: flex; align-items: center; gap: .5rem;
+  text-decoration: none; color: var(--text2);
+  font-size: .88rem; font-weight: 500;
+  padding: .45rem 1rem; border-radius: 30px;
+  border: 1px solid var(--link-border);
+  transition: color .2s, border-color .2s, background .2s, transform .2s;
+}
+.link:hover {
+  color: var(--acc); border-color: var(--acc2);
+  background: var(--link-hover); transform: translateY(-2px);
+}
+.link svg { width: 15px; height: 15px; flex-shrink: 0; opacity: .9; }
+
+.heart-deco {
+  margin-top: 2.2rem; font-size: .8rem;
+  color: var(--acc); opacity: .38; letter-spacing: .3em;
+}
+
+/* ─── RUSSIAN FONT OVERRIDES ─── */
+body.ru .bio, body.ru .note, body.ru .role,
+body.ru .greeting, body.ru .link {
+  font-family: 'Nunito', sans-serif;
+}
+body.ru .bio  { font-size: .9rem; }
+body.ru .note { font-size: .72rem; }
+body.ru .role { font-size: .96rem; letter-spacing: .06em; }
+body.ru .greeting { font-size: .85rem; }
+</style>
+</head>
+<body data-theme="dark">
+
+<!-- Background blobs — data-speed controls parallax depth -->
+<div class="blob b1" data-speed="0.018"></div>
+<div class="blob b2" data-speed="0.022"></div>
+<div class="blob b3" data-speed="0.014"></div>
+<div class="blob b4" data-speed="0.028"></div>
+<div class="blob b5" data-speed="0.020"></div>
+
+<!-- Decorative rings — data-speed controls parallax depth -->
+<div class="deco-circles">
+  <div class="circle c1"  data-speed="0.012"></div>
+  <div class="circle c2"  data-speed="0.016"></div>
+  <div class="circle c3"  data-speed="0.024"></div>
+  <div class="circle c4"  data-speed="0.030"></div>
+  <div class="circle c5"  data-speed="0.034"></div>
+  <div class="circle c6"  data-speed="0.038"></div>
+  <div class="circle c7"  data-speed="0.026"></div>
+  <div class="circle c8"  data-speed="0.042"></div>
+  <div class="circle c9"  data-speed="0.018"></div>
+  <div class="circle c10" data-speed="0.046"></div>
+</div>
+
+<!-- Floating hearts & stars (generated by JS) -->
+<div class="floats" id="floats"></div>
+
+<!-- Top-right buttons -->
+<div class="controls">
+  <button class="ctrl" id="lbtn">RU</button>
+  <button class="ctrl" id="tbtn">&#9728; light</button>
+</div>
+
+<!-- ═══════════════════════════════
+     MAIN CONTENT — edit freely
+     ═══════════════════════════════ -->
+<div class="content">
+  <div class="greeting" id="greeting">hello, i'm</div>
+  <div class="name">Elsie</div>
+  <div class="role" id="role">backend developer &#10022;</div>
+
+  <!-- English bio (translated by JS on language switch) -->
+  <p class="bio" id="bio">
+    I work with <strong>Go</strong> and <strong>Elixir</strong>.<br/>
+    I won't stop until everything works as it should<br/>
+    and until I figure it all out. &#x2661;
+  </p>
+
+  <!-- Note line — untouched -->
+  <p class="note" id="note">
+    pet projects &middot; junior &middot; always learning<br/>
+    next up: rust &middot; c# &middot; security in dev
+  </p>
+
+  <!-- Links — untouched -->
+  <div class="links">
+    <a href="https://github.com/AnxietyElsie" class="link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      github
+    </a>
+    <a href="https://t.me/anxiety_elsya" class="link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.48 13.802l-2.95-.924c-.642-.204-.657-.642.136-.953l11.527-4.448c.537-.194 1.006.131.37.771z"/></svg>
+      telegram
+    </a>
+    <a href="mailto:anxiety.elsie@gmail.com" class="link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      email
+    </a>
+    <a href="https://discordapp.com/users/566258949087821834" class="link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.074.074 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+      discord
+    </a>
+  </div>
+
+  <div class="heart-deco">&#9825; &#10022; &#9825;</div>
+</div>
+<!-- ════════════════════════════════ -->
+
+<script>
+(function () {
+
+  /* ─────────────────────────────────
+     TRANSLATIONS
+     To edit text: change the values below.
+     ───────────────────────────────── */
+  var T = {
+    en: {
+      greeting  : 'hello, i\'m',
+      role      : 'backend developer \u2726',
+      // English bio — edit here
+      bio       : 'I work with <strong>Go</strong> and <strong>Elixir</strong>.<br/>I won\'t stop until everything works as it should<br/>and until I figure it all out. \u2661',
+      note      : 'pet projects i\'m proud of \u00b7 junior \u00b7 always learning<br/>next up: rust \u00b7 c# \u00b7 security in dev',
+      lbtn      : 'RU',
+      tbtn_dark : '\u2600 light',
+      tbtn_light: '\u263d dark'
+    },
+    ru: {
+      greeting  : '\u043f\u0440\u0438\u0432\u0435\u0442, \u044f',
+      role      : '\u0431\u044d\u043a\u044d\u043d\u0434-\u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a \u2726',
+      // Russian bio — edit here
+      bio       : '\u042f \u0440\u0430\u0431\u043e\u0442\u0430\u044e \u043d\u0430 <strong>Go</strong> \u0438 <strong>Elixir</strong>.<br/>\u041d\u0435 \u043e\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u044e\u0441\u044c, \u043f\u043e\u043a\u0430 \u0432\u0441\u0451 \u043d\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u043a\u0430\u043a \u043d\u0430\u0434\u043e,<br/>\u0438 \u043f\u043e\u043a\u0430 \u044f \u0432\u043e \u0432\u0441\u0451\u043c \u043d\u0435 \u0440\u0430\u0437\u0431\u0435\u0440\u0443\u0441\u044c. \u2661',
+      note      : '\u0435\u0441\u0442\u044c \u043a\u0440\u0443\u0442\u044b\u0435 \u043f\u0440\u043e\u0435\u043a\u0442\u044b \u00b7 \u0434\u0436\u0443\u043d \u00b7 \u0443\u0447\u0443\u0441\u044c \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e<br/>\u0432 \u043f\u043b\u0430\u043d\u0430\u0445: rust \u00b7 c# \u00b7 \u0431\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435',
+      lbtn      : 'EN',
+      tbtn_dark : '\u2600 light',
+      tbtn_light: '\u263d dark'
+    }
+  };
+
+  var lang  = 'en';
+  var theme = 'dark';
+
+  /* ─────────────────────────────────
+     FLOATING SYMBOLS
+     Change count (55) or symbol mix as needed.
+     ───────────────────────────────── */
+  var syms = ['\u2661', '\u2726', '\u2661', '\u2726', '\u2726', '\u2661', '\u2726', '\u2661'];
+  var fc   = document.getElementById('floats');
+  var floatEls = [];
+
+  for (var i = 0; i < 55; i++) {
+    var d = document.createElement('div');
+    d.className  = 'f';
+    d.textContent = syms[Math.floor(Math.random() * syms.length)];
+    d.style.left     = (Math.random() * 100) + '%';
+    d.style.top      = (Math.random() * 100) + '%';
+    d.style.opacity  = (0.05 + Math.random() * 0.28).toFixed(2);
+    d.style.fontSize = (7 + Math.random() * 15) + 'px';
+    // Each float gets its own parallax speed
+    d.dataset.speed  = (0.02 + Math.random() * 0.06).toFixed(3);
+    fc.appendChild(d);
+    floatEls.push(d);
+  }
+
+  /* ─────────────────────────────────
+     MOUSE PARALLAX
+     Increase speed values in HTML data-speed attrs
+     for stronger movement, decrease for subtler.
+     ───────────────────────────────── */
+  var cx = window.innerWidth  / 2;
+  var cy = window.innerHeight / 2;
+  var mx = cx, my = cy;   // smoothed mouse
+  var tx = cx, ty = cy;   // raw mouse target
+
+  var blobs   = document.querySelectorAll('.blob');
+  var circles = document.querySelectorAll('.circle');
+
+  window.addEventListener('resize', function () {
+    cx = window.innerWidth  / 2;
+    cy = window.innerHeight / 2;
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    tx = e.clientX;
+    ty = e.clientY;
+  });
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  (function tick() {
+    mx = lerp(mx, tx, 0.07);
+    my = lerp(my, ty, 0.07);
+    var dx = mx - cx;
+    var dy = my - cy;
+
+    blobs.forEach(function (el) {
+      var s = parseFloat(el.dataset.speed) || 0.02;
+      el.style.transform = 'translate(' + (dx * s).toFixed(2) + 'px,' + (dy * s).toFixed(2) + 'px)';
+    });
+
+    circles.forEach(function (el) {
+      var s = parseFloat(el.dataset.speed) || 0.02;
+      el.style.transform = 'translate(' + (dx * s).toFixed(2) + 'px,' + (dy * s).toFixed(2) + 'px)';
+    });
+
+    floatEls.forEach(function (el) {
+      var s = parseFloat(el.dataset.speed) || 0.04;
+      el.style.transform = 'translate(' + (dx * s).toFixed(2) + 'px,' + (dy * s).toFixed(2) + 'px)';
+    });
+
+    requestAnimationFrame(tick);
+  }());
+
+  /* ─────────────────────────────────
+     LANGUAGE TOGGLE
+     ───────────────────────────────── */
+  document.getElementById('lbtn').addEventListener('click', function () {
+    lang = lang === 'en' ? 'ru' : 'en';
+    var t = T[lang];
+    document.getElementById('greeting').textContent = t.greeting;
+    document.getElementById('role').textContent     = t.role;
+    document.getElementById('bio').innerHTML        = t.bio;
+    document.getElementById('note').innerHTML       = t.note;
+    document.getElementById('lbtn').textContent     = t.lbtn;
+    document.documentElement.lang = lang;
+    document.body.classList.toggle('ru', lang === 'ru');
+  });
+
+  /* ─────────────────────────────────
+     THEME TOGGLE
+     ───────────────────────────────── */
+  document.getElementById('tbtn').addEventListener('click', function () {
+    theme = theme === 'dark' ? 'light' : 'dark';
+    document.body.dataset.theme = theme;
+    document.getElementById('tbtn').textContent =
+      theme === 'dark' ? T[lang].tbtn_dark : T[lang].tbtn_light;
+  });
+
+}());
+</script>
+</body>
+</html>
